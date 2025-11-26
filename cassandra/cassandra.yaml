@@ -1,0 +1,5 @@
+# cassandra/cassandra.yaml — تحسينات للـ streaming
+concurrent_writes: 64
+concurrent_reads: 32
+memtable_flush_writers: 8
+stream_throughput_outbound_megabits_per_sec: 400

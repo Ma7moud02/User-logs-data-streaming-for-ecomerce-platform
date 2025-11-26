@@ -113,6 +113,31 @@ services:
     volumes:
       - minio:/data
 
+  cassandra:
+    image: cassandra:5.0
+    container_name: grad-cassandra
+    hostname: cassandra
+    ports:
+      - "9042:9042"      # CQL native port (لـ Spark والتطبيقات)
+      - "7199:7199"      # JMX (monitoring)
+      - "9160:9160"      # Thrift (اختياري)
+    environment:
+      - CASSANDRA_CLUSTER_NAME=besha-cluster
+      - HEAP_NEWSIZE=512M
+      - MAX_HEAP_SIZE=2G
+      - CASSANDRA_DC=DC1
+      - CASSANDRA_RACK=RACK1
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD", "cqlsh", "-u", "cassandra", "-p", "cassandra", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    networks:
+      - lp
+
   grafana:
     image: grafana/grafana:11.3.0
     depends_on:
@@ -138,3 +163,4 @@ volumes:
   postgres:
   minio:
   grafana:
+  cassandra-data:
